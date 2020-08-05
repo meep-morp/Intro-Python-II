@@ -1,32 +1,27 @@
-from art import art
+from art import title
 
 from room import Room
 from player import Player
 from item import Item
 
 # Declare all the rooms
-
-items = {
-    'sword': Item('Bronze Blade', "The cracked weapon shines modestly, but it's history is brilliant"),
-}
-
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons", []),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-                     passages run north and east."""),
+                     passages run north and east.""", [Item('Bronze Blade', "The cracked weapon shines modestly, but it's history is brilliant")]),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
                     into the darkness. Ahead to the north, a light flickers in
-                    the distance, but there is no way across the chasm."""),
+                    the distance, but there is no way across the chasm.""", []),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-                    to north. The smell of gold permeates the air."""),
+                    to north. The smell of gold permeates the air.""", []),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
                     chamber! Sadly, it has already been completely emptied by
-                    earlier adventurers. The only exit is to the south."""),
+                    earlier adventurers. The only exit is to the south.""", []),
 }
 
 
@@ -62,8 +57,8 @@ room['treasure'].s_to = room['narrow']
 # CONTROLS
 
 print("Starting..")
-print(art)
-
+print(title)
+print("\nPress 'q' to quit\n")
 user = input("\nWhat is your name?\n")
 player = Player(user, room['outside'])
 print(player)
@@ -71,9 +66,21 @@ print("\n")
 print(player.current_room)
 print("\n")
 
-
 while not user == "q":
     # Game Loop
+
+    # CHECK IF ITEMS ARE AVAILABLE
+    if len(player.current_room.items) > 0:
+        for i in player.current_room.items:
+            print(f"{player.name} found {i.name}\n{i.description}\n")
+            user = input("Take item?\n[ Y ] [ N ]\n")
+
+            if(user.upper() == "Y"):
+                player.addItem(i)
+                player.current_room.items.remove(i)
+                print("Item Obtained\n")
+            else:
+                break
 
     # OUTSIDE
     if(player.current_room == room['outside']):
