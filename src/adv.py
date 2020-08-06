@@ -7,21 +7,21 @@ from item import Item
 # Declare all the rooms
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons", []),
+                     "North of you, the cave mount beckons", [Item("Lantern", "Could be useful in a dark cave.", ["emit_light"])]),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-                     passages run north and east.""", [Item('Bronze Blade', "The cracked weapon shines modestly, but it's history is brilliant")]),
+                     passages run north and east.""", [Item('Bronze Blade', "The cracked weapon shines modestly, but it's history is brilliant")], ["emit_light"]),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
                     into the darkness. Ahead to the north, a light flickers in
-                    the distance, but there is no way across the chasm.""", []),
+                    the distance, but there is no way across the chasm."""),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-                    to north. The smell of gold permeates the air.""", []),
+                    to north. The smell of gold permeates the air."""),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
                     chamber! Sadly, it has already been completely emptied by
-                    earlier adventurers. The only exit is to the south.""", []),
+                    earlier adventurers. The only exit is to the south."""),
 }
 
 
@@ -70,73 +70,63 @@ while not user == "q":
     # Game Loop
 
     # CHECK IF ITEMS ARE AVAILABLE
-    if len(player.current_room.items) > 0:
-        for i in player.current_room.items:
-            print(f"{player.name} found {i.name}\n{i.description}\n")
-            user = input("Take item?\n[ Y ] [ N ]\n")
+    # if len(player.current_room.items) > 0:
+    #     for i in player.current_room.items:
+    #         print(f"{player.name} found {i.name}\n{i.description}\n")
+    #         user = input("Take item?\n[ Y ] [ N ]\n")
 
-            if(user.upper() == "Y"):
-                player.addItem(i)
-                player.current_room.items.remove(i)
-                print("Item Obtained\n")
+    #         if(user.upper() == "Y"):
+    #             player.addItem(i)
+    #             player.current_room.items.remove(i)
+    #             print("Item Obtained\n")
+    #         else:
+    #             break
+
+    # CHECK LIGHT SOURCES
+    # if("emit_light" not in player.current_room.attrs):
+    #     for item in player.items:
+    #         if "emit_light" in item.attrs:
+    #             break
+    #         else:
+    #             print("It's Pitch black!")
+    #             user = input("Return to entrance?\n[ Y ] [ N ]\n")
+    #             if(user.upper() == "Y"):
+    #                 player.setRoom(room['outside'])
+
+    #             else:
+    #                 print("You were eaten by Grue.")
+    #                 user = "q"
+    #                 break
+
+    # CHECK CURRENT ROOM
+    for r in room:
+        print(room[r])
+        if(room[r] == player.current_room):
+            user = input(
+                "Which Direction do you take?\n[ N ] [ E ] [ S ] [ W ]\n")
+            if(user.upper() == "E"):
+                if(room[r].e_to == None):
+                    print("You cannot go that way!")
+                else:
+                    player.setRoom(room[r].e_to)
+
+            elif(user.upper() == "S"):
+                if(room[r].s_to == None):
+                    print("You cannot go that way!")
+                else:
+                    player.setRoom(room[r].s_to)
+
+            elif(user.upper() == "N"):
+                if(room[r].n_to == None):
+                    print("You cannot go that way!")
+                else:
+                    player.setRoom(room[r].n_to)
+
+            elif(user.upper() == "W"):
+                if(room[r].w_to == None):
+                    print("You cannot go that way!")
+                else:
+                    player.setRoom(room[r].w_to)
+
             else:
-                break
-
-    # OUTSIDE
-    if(player.current_room == room['outside']):
-        user = input("Enter the cave?\n[ Y ] [ N ]\n")
-
-        if(user.upper() == "Y"):
-            player.setRoom(room['outside'].n_to)
-
-        else:
-            print(
-                "You chicken out and return home to your mother's, where you live out the rest of your days.")
-            user = 'q'
-
-    # FOYER
-    elif(player.current_room == room['foyer']):
-        user = input("Which direction will you move?\n[ E ] [ N ] [ S ]\n")
-
-        if(user.upper() == "E"):
-            player.setRoom(room["foyer"].e_to)
-
-        elif(user.upper() == "S"):
-            player.setRoom(room["foyer"].s_to)
-
-        elif(user.upper() == "N"):
-            player.setRoom(room["foyer"].n_to)
-
-        else:
-            print("Please choose to continue...")
-
-    # OVERLOOK
-    elif(player.current_room == room['overlook']):
-        user = input("Which direction will you move?\n[ S ]\n")
-
-        if(user.upper() == "S"):
-            player.setRoom(room["overlook"].s_to)
-        else:
-            print("Please choose to continue...")
-
-    # NARROW
-    elif(player.current_room == room['narrow']):
-        user = input("Which direction will you move?\n[ W ] [ N ]\n")
-        if(user.upper() == "W"):
-            player.setRoom(room["narrow"].w_to)
-
-        elif(user.upper() == "N"):
-            player.setRoom(room["narrow"].n_to)
-
-        else:
-            print("Please choose to continue...")
-
-    # TREASURE
-    elif(player.current_room == room['treasure']):
-        user = input("Which direction will you move?\n[ S ]\n")
-
-        if(user.upper() == "S"):
-            player.setRoom(room["treasure"].s_to)
-
-        else:
-            print("Please choose to continue...")
+                print("Please choose to continue...")
