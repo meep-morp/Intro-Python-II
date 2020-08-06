@@ -2,26 +2,27 @@ from art import title
 
 from room import Room
 from player import Player
+from enemy import Enemy
 from item import Item
 
 # Declare all the rooms
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons", []),
+                     "North of you, the cave mount beckons"),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
                      passages run north and east.""", [Item('Bronze Blade', "The cracked weapon shines modestly, but it's history is brilliant")]),
 
     'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
                     into the darkness. Ahead to the north, a light flickers in
-                    the distance, but there is no way across the chasm.""", []),
+                    the distance, but there is no way across the chasm."""),
 
     'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-                    to north. The smell of gold permeates the air.""", []),
+                    to north. The smell of gold permeates the air."""),
 
     'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
                     chamber! Sadly, it has already been completely emptied by
-                    earlier adventurers. The only exit is to the south.""", []),
+                    earlier adventurers. The only exit is to the south.""", [], [Enemy("The Serpent", "The Serpent's eyes bore into you, angered at your invasion of it's home.", 200, 50)]),
 }
 
 
@@ -69,6 +70,25 @@ print("\n")
 while not user == "q":
     # Game Loop
 
+    if(player.current_health <= 0):
+        user = "q"
+        print(
+            "Your injuries were too grave, you died bravely in Serpent's Lair")
+
+    #  Drop Item
+    if user == "drop":
+        print("Current Items\n")
+        for i, item in enumerate(player.items):
+            print(f"[ {i} ]\n")
+            print(item.name)
+            print("\n")
+
+        if user.lower() == "cancel":
+            break
+
+        num = int(input("Which item do you want to drop?\n"))
+        player.dropItem(num)
+
     # CHECK IF ITEMS ARE AVAILABLE
     if len(player.current_room.items) > 0:
         for i in player.current_room.items:
@@ -81,6 +101,30 @@ while not user == "q":
                 print("Item Obtained\n")
             else:
                 break
+
+    # Check if enemies are around
+    if len(player.current_room.enemies) > 0:
+
+        for i in player.current_room.enemies:
+            print(f"{player.name} found {i.name}\n{i.description}\n")
+            user = input("Attack?\n[ Y ] [ N ]\n")
+
+            if i.currentHealth <= 0:
+                print("Enemy Defeated")
+
+            while i.currentHealth >= 0:
+                if(user.upper() == "Y"):
+
+                    amount = i.hurt()
+                    print(f"{i.name} hit for {amount}\n")
+
+                    eneAttack = i.attack()
+                    player.hurt(eneAttack)
+                    print(f"{i.name} hit {player.name} for {eneAttack}\n")
+
+                else:
+                    print("You ran away in fear of the monster.")
+                    user = 'q'
 
     # OUTSIDE
     if(player.current_room == room['outside']):
