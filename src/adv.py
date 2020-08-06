@@ -99,7 +99,7 @@ while not user == "q":
     #                 break
 
     # CHECK CURRENT ROOM
-    for r in room:
+    for i, r in enumerate(room):
         print(room[r])
         if(room[r] == player.current_room):
             user = input(
@@ -111,10 +111,11 @@ while not user == "q":
                     player.setRoom(room[r].e_to)
 
             elif(user.upper() == "S"):
-                if(room[r].s_to == None):
-                    print("You cannot go that way!")
-                else:
+                if(room[1].s_to != None):
                     player.setRoom(room[r].s_to)
+
+                else:
+                    print("You cannot go that way!")
 
             elif(user.upper() == "N"):
                 if(room[r].n_to == None):
